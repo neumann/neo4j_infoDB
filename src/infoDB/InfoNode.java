@@ -14,8 +14,14 @@ import org.neo4j.graphdb.Traverser.Order;
 
 @SuppressWarnings("deprecation")
 public class InfoNode implements Node, Comparable<Node> {
+	@Override
+	public String toString() {
+		return n.toString();
+	}
+
 	private Node n;
-	protected Node unwrap(){
+
+	protected Node unwrap() {
 		return n;
 	}
 
@@ -24,14 +30,16 @@ public class InfoNode implements Node, Comparable<Node> {
 	}
 
 	public InfoNode(Node n) {
-		if(n instanceof InfoNode)throw new Error("dont hand and infoNode to an infoNode constructor");
+		if (n instanceof InfoNode)
+			throw new Error("dont hand and infoNode to an infoNode constructor");
 		this.n = n;
 	}
 
 	@Override
 	public Relationship createRelationshipTo(Node arg0, RelationshipType arg1) {
 		log("createRelationshipTo(Node arg0, RelationshipType arg1)");
-		return new InfoRelationship(n.createRelationshipTo(((InfoNode)arg0).unwrap(), arg1));
+		return new InfoRelationship(n.createRelationshipTo(((InfoNode) arg0)
+				.unwrap(), arg1));
 	}
 
 	@Override
@@ -217,22 +225,17 @@ public class InfoNode implements Node, Comparable<Node> {
 	public boolean equals(Object obj) {
 		return ((InfoNode) obj).unwrap().getId() == n.getId();
 	}
-	
+
 	@Override
 	public int compareTo(Node arg0) {
 		long ourId = this.getId(), theirId = n.getId();
 
-        if ( ourId < theirId )
-        {
-            return -1;
-        }
-        else if ( ourId > theirId )
-        {
-            return 1;
-        }
-        else
-        {
-            return 0;
-        }
+		if (ourId < theirId) {
+			return -1;
+		} else if (ourId > theirId) {
+			return 1;
+		} else {
+			return 0;
+		}
 	}
 }
