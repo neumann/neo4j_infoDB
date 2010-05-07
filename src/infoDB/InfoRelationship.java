@@ -5,16 +5,11 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
 
-public class InfoRelationship implements Relationship {
+public class InfoRelationship implements Relationship, Comparable<Relationship>{
 	private Relationship rs;
 
 	protected Relationship unwrap() {
 		return rs;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		return ((InfoRelationship) obj).unwrap().getId() == rs.getId();
 	}
 
 	private void log(String key) {
@@ -125,5 +120,28 @@ public class InfoRelationship implements Relationship {
 	public void setProperty(String arg0, Object arg1) {
 		log("r.setProperty(arg0, arg1)");
 		rs.setProperty(arg0, arg1);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return ((InfoRelationship) obj).unwrap().getId() == rs.getId();
+	}
+	
+	@Override
+	public int compareTo(Relationship r) {
+		int ourId = (int) this.getId(), theirId = (int) r.getId();
+
+        if ( ourId < theirId )
+        {
+            return -1;
+        }
+        else if ( ourId > theirId )
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
 	}
 }

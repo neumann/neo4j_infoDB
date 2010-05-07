@@ -13,15 +13,10 @@ import org.neo4j.graphdb.Traverser;
 import org.neo4j.graphdb.Traverser.Order;
 
 @SuppressWarnings("deprecation")
-public class InfoNode implements Node {
+public class InfoNode implements Node, Comparable<Node> {
 	private Node n;
 	protected Node unwrap(){
 		return n;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		return ((InfoNode) obj).unwrap().getId() == n.getId();
 	}
 
 	private void log(String key) {
@@ -218,4 +213,26 @@ public class InfoNode implements Node {
 		}
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		return ((InfoNode) obj).unwrap().getId() == n.getId();
+	}
+	
+	@Override
+	public int compareTo(Node arg0) {
+		long ourId = this.getId(), theirId = n.getId();
+
+        if ( ourId < theirId )
+        {
+            return -1;
+        }
+        else if ( ourId > theirId )
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+	}
 }
