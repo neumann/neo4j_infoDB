@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>AM_Master</groupId>
-	<artifactId>Neo4j_API_Test</artifactId>
+	<artifactId>Neo4j_Info</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
 	<repositories>
@@ -14,25 +14,15 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
-		<repository>
-			<id>oracleReleases</id>
-			<name>Oracle Released Java Packages</name>
-			<url>http://download.oracle.com/maven</url>
-			<layout>default</layout>
-		</repository>
 	</repositories>
 
 	<dependencies>
-		<dependency>
-			<groupId>com.sleepycat</groupId>
-			<artifactId>je</artifactId>
-			<version>4.0.92</version>
-		</dependency>
 		<dependency>
 			<groupId>org.neo4j</groupId>
 			<artifactId>neo4j-apoc</artifactId>
 			<version>1.1-SNAPSHOT</version>
 			<type>pom</type>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 </project>

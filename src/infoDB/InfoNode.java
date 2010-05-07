@@ -15,14 +15,15 @@ import org.neo4j.graphdb.Traverser.Order;
 @SuppressWarnings("deprecation")
 public class InfoNode implements Node {
 	private Node n;
+
 	private void log(String key) {
 		InfoGraphDatabaseService.log(key);
 	}
-	
-	public InfoNode(Node n){
+
+	public InfoNode(Node n) {
 		this.n = n;
 	}
-	
+
 	@Override
 	public Relationship createRelationshipTo(Node arg0, RelationshipType arg1) {
 		log("createRelationshipTo(Node arg0, RelationshipType arg1)");
@@ -44,27 +45,27 @@ public class InfoNode implements Node {
 	@Override
 	public Iterable<Relationship> getRelationships() {
 		log("getRelationships()");
-		return new infoRelaIteratable(n.getRelationships());
+		return new InfoRelaIteratable(n.getRelationships());
 	}
 
 	@Override
 	public Iterable<Relationship> getRelationships(RelationshipType... arg0) {
 		log("getRelationships(RelationshipType... arg0)");
-		
-		return new infoRelaIteratable(n.getRelationships(arg0));
+
+		return new InfoRelaIteratable(n.getRelationships(arg0));
 	}
 
 	@Override
 	public Iterable<Relationship> getRelationships(Direction arg0) {
 		log("getRelationships(Direction arg0)");
-		return new infoRelaIteratable(n.getRelationships(arg0));
+		return new InfoRelaIteratable(n.getRelationships(arg0));
 	}
 
 	@Override
 	public Iterable<Relationship> getRelationships(RelationshipType arg0,
 			Direction arg1) {
 		log("getRelationships(RelationshipType arg0,Direction arg0)");
-		return new infoRelaIteratable(n.getRelationships(arg0, arg1));
+		return new InfoRelaIteratable(n.getRelationships(arg0, arg1));
 	}
 
 	@Override
@@ -108,7 +109,7 @@ public class InfoNode implements Node {
 	@Override
 	public Traverser traverse(Order arg0, StopEvaluator arg1,
 			ReturnableEvaluator arg2, RelationshipType arg3, Direction arg4) {
-		
+
 		log("traverse(Order arg0, StopEvaluator arg1, ReturnableEvaluator arg2, RelationshipType arg3, Direction arg4)");
 		return n.traverse(arg0, arg1, arg2, arg3, arg4);
 	}
@@ -118,7 +119,7 @@ public class InfoNode implements Node {
 			ReturnableEvaluator arg2, RelationshipType arg3, Direction arg4,
 			RelationshipType arg5, Direction arg6) {
 		log("traverse(Order arg0, StopEvaluator arg1,ReturnableEvaluator arg2, RelationshipType arg3, Direction arg4, RelationshipType arg5, Direction arg6)");
-		
+
 		return n.traverse(arg0, arg1, arg2, arg3, arg5, arg6);
 	}
 
@@ -170,25 +171,28 @@ public class InfoNode implements Node {
 		n.setProperty(arg0, arg1);
 	}
 
-	private class infoRelaIteratable implements Iterable<Relationship>{
+	private class InfoRelaIteratable implements Iterable<Relationship> {
 		private Iterable<Relationship> iter;
-		public infoRelaIteratable(Iterable<Relationship> iter) {
+
+		public InfoRelaIteratable(Iterable<Relationship> iter) {
 			this.iter = iter;
 		}
-		
+
 		@Override
 		public Iterator<Relationship> iterator() {
-			
-			return new infoRelaIterator(iter.iterator());
+
+			return new InfoRelaIterator(iter.iterator());
 		}
-		
+
 	}
-	private class infoRelaIterator implements Iterator<Relationship>{
+
+	private class InfoRelaIterator implements Iterator<Relationship> {
 		private Iterator<Relationship> iter;
-		public infoRelaIterator(Iterator<Relationship> iter) {
+
+		public InfoRelaIterator(Iterator<Relationship> iter) {
 			this.iter = iter;
 		}
-		
+
 		@Override
 		public boolean hasNext() {
 			return iter.hasNext();
@@ -201,8 +205,8 @@ public class InfoNode implements Node {
 
 		@Override
 		public void remove() {
-			iter.remove();	
+			iter.remove();
 		}
 	}
-	
+
 }

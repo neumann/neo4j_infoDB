@@ -16,24 +16,27 @@ import org.neo4j.kernel.EmbeddedGraphDatabase;
 
 public class InfoGraphDatabaseService implements GraphDatabaseService {
 	private GraphDatabaseService db;
-	public static HashMap<String, Long> accesses  = new HashMap<String, Long>();
-	public static void log(String key){
-		if(accesses.containsKey(key)){
-			long val = accesses.get(key)+1;
+	public static HashMap<String, Long> accesses = new HashMap<String, Long>();
+
+	public static void log(String key) {
+		if (accesses.containsKey(key)) {
+			long val = accesses.get(key) + 1;
 			accesses.put(key, val);
-		}else{
+		} else {
 			accesses.put(key, new Long(1));
 		}
+
+		System.out.println(InfoGraphDatabaseService.accessToString());
 	}
-	
-	public static String accessToString(){
+
+	public static String accessToString() {
 		return accesses.toString();
 	}
-	
+
 	public InfoGraphDatabaseService(String storDir) {
-		this.db=new EmbeddedGraphDatabase(storDir);
+		this.db = new EmbeddedGraphDatabase(storDir);
 	}
-	
+
 	@Override
 	public Transaction beginTx() {
 		log("beginTx()");
@@ -62,7 +65,7 @@ public class InfoGraphDatabaseService implements GraphDatabaseService {
 	@Override
 	public Iterable<Node> getAllNodes() {
 		log("getAllNodes()");
-		return new infoNodeIteratable(db.getAllNodes());
+		return new InfoNodeIteratable(db.getAllNodes());
 	}
 
 	@Override
@@ -122,25 +125,28 @@ public class InfoGraphDatabaseService implements GraphDatabaseService {
 		return db.unregisterTransactionEventHandler(arg0);
 	}
 
-	private class infoNodeIteratable implements Iterable<Node>{
+	private class InfoNodeIteratable implements Iterable<Node> {
 		private Iterable<Node> iter;
-		public infoNodeIteratable(Iterable<Node> iter) {
+
+		public InfoNodeIteratable(Iterable<Node> iter) {
 			this.iter = iter;
 		}
-		
+
 		@Override
 		public Iterator<Node> iterator() {
-			
-			return new infoNodeIterator(iter.iterator());
+
+			return new InfoNodeIterator(iter.iterator());
 		}
-		
+
 	}
-	private class infoNodeIterator implements Iterator<Node>{
+
+	private class InfoNodeIterator implements Iterator<Node> {
 		private Iterator<Node> iter;
-		public infoNodeIterator(Iterator<Node> iter) {
+
+		public InfoNodeIterator(Iterator<Node> iter) {
 			this.iter = iter;
 		}
-		
+
 		@Override
 		public boolean hasNext() {
 			return iter.hasNext();
@@ -153,7 +159,7 @@ public class InfoGraphDatabaseService implements GraphDatabaseService {
 
 		@Override
 		public void remove() {
-			iter.remove();	
+			iter.remove();
 		}
 	}
 }
