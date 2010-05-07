@@ -8,7 +8,7 @@ import org.neo4j.graphdb.RelationshipType;
 public class InfoRelationship implements Relationship, Comparable<Relationship> {
 	@Override
 	public String toString() {
-		return rs.toString();
+		return "InfoRelationship" + rs.getId();
 	}
 
 	private Relationship rs;

@@ -16,7 +16,7 @@ import org.neo4j.graphdb.Traverser.Order;
 public class InfoNode implements Node, Comparable<Node> {
 	@Override
 	public String toString() {
-		return n.toString();
+		return "InfoNode" + n.getId();
 	}
 
 	private Node n;
