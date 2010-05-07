@@ -7,11 +7,16 @@ import org.neo4j.graphdb.RelationshipType;
 
 public class InfoRelationship implements Relationship {
 	private Relationship rs;
+	protected Relationship unwrap(){
+		return rs;
+	}
+	
 	private void log(String key) {
 		InfoGraphDatabaseService.log(key);
 	}
 	
 	public InfoRelationship(Relationship rs) {
+		if(rs instanceof InfoRelationship)throw new Error("dont hand and inforel to an inforel constructor");
 		this.rs = rs;
 	}
 	
@@ -47,7 +52,7 @@ public class InfoRelationship implements Relationship {
 	@Override
 	public Node getOtherNode(Node arg0) {
 		log("getOtherNode(arg0)");
-		return new InfoNode(rs.getOtherNode(arg0));
+		return new InfoNode(rs.getOtherNode(((InfoNode)arg0).unwrap()));
 	}
 
 	@Override
@@ -114,5 +119,4 @@ public class InfoRelationship implements Relationship {
 		log("r.setProperty(arg0, arg1)");
 		rs.setProperty(arg0, arg1);
 	}
-
 }

@@ -15,19 +15,23 @@ import org.neo4j.graphdb.Traverser.Order;
 @SuppressWarnings("deprecation")
 public class InfoNode implements Node {
 	private Node n;
+	protected Node unwrap(){
+		return n;
+	}
 
 	private void log(String key) {
 		InfoGraphDatabaseService.log(key);
 	}
 
 	public InfoNode(Node n) {
+		if(n instanceof InfoNode)throw new Error("dont hand and infoNode to an infoNode constructor");
 		this.n = n;
 	}
 
 	@Override
 	public Relationship createRelationshipTo(Node arg0, RelationshipType arg1) {
 		log("createRelationshipTo(Node arg0, RelationshipType arg1)");
-		return new InfoRelationship(n.createRelationshipTo(arg0, arg1));
+		return new InfoRelationship(n.createRelationshipTo(((InfoNode)arg0).unwrap(), arg1));
 	}
 
 	@Override
