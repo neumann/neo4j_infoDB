@@ -19,6 +19,11 @@ public class InfoNode implements Node {
 		return n;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		return ((InfoNode) obj).unwrap().getId() == n.getId();
+	}
+
 	private void log(String key) {
 		InfoGraphDatabaseService.log(key);
 	}

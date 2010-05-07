@@ -7,19 +7,26 @@ import org.neo4j.graphdb.RelationshipType;
 
 public class InfoRelationship implements Relationship {
 	private Relationship rs;
-	protected Relationship unwrap(){
+
+	protected Relationship unwrap() {
 		return rs;
 	}
-	
+
+	@Override
+	public boolean equals(Object obj) {
+		return ((InfoRelationship) obj).unwrap().getId() == rs.getId();
+	}
+
 	private void log(String key) {
 		InfoGraphDatabaseService.log(key);
 	}
-	
+
 	public InfoRelationship(Relationship rs) {
-		if(rs instanceof InfoRelationship)throw new Error("dont hand and inforel to an inforel constructor");
+		if (rs instanceof InfoRelationship)
+			throw new Error("dont hand and inforel to an inforel constructor");
 		this.rs = rs;
 	}
-	
+
 	@Override
 	public void delete() {
 		log("rs.delete()");
@@ -43,8 +50,8 @@ public class InfoRelationship implements Relationship {
 		log("getNodes()");
 		Node[] n = rs.getNodes();
 		InfoNode[] res = new InfoNode[n.length];
-		for(int i = 0; i< n.length; i++){
-			res[i]= new InfoNode(n[i]);
+		for (int i = 0; i < n.length; i++) {
+			res[i] = new InfoNode(n[i]);
 		}
 		return res;
 	}
@@ -52,13 +59,13 @@ public class InfoRelationship implements Relationship {
 	@Override
 	public Node getOtherNode(Node arg0) {
 		log("getOtherNode(arg0)");
-		return new InfoNode(rs.getOtherNode(((InfoNode)arg0).unwrap()));
+		return new InfoNode(rs.getOtherNode(((InfoNode) arg0).unwrap()));
 	}
 
 	@Override
 	public Node getStartNode() {
 		log("getStartNode()");
-		return new InfoNode( rs.getStartNode());
+		return new InfoNode(rs.getStartNode());
 	}
 
 	@Override
@@ -87,7 +94,7 @@ public class InfoRelationship implements Relationship {
 	@Override
 	public Object getProperty(String arg0, Object arg1) {
 		log("r.getProperty(arg0, arg1)");
-		return rs.getProperty(arg0,arg1);
+		return rs.getProperty(arg0, arg1);
 	}
 
 	@Override

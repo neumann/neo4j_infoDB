@@ -26,7 +26,7 @@ public class InfoGraphDatabaseService implements GraphDatabaseService {
 			accesses.put(key, new Long(1));
 		}
 
-		System.out.println(InfoGraphDatabaseService.accessToString());
+		// System.out.println(InfoGraphDatabaseService.accessToString());
 	}
 
 	public static String accessToString() {
