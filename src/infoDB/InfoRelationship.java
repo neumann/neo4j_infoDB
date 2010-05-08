@@ -8,7 +8,7 @@ import org.neo4j.graphdb.RelationshipType;
 public class InfoRelationship implements Relationship, Comparable<Relationship> {
 	@Override
 	public String toString() {
-		return "InfoRelationship" + rs.getId();
+		return "InfoRelationship[" + rs.getId() + "]";
 	}
 
 	private Relationship rs;
@@ -129,12 +129,18 @@ public class InfoRelationship implements Relationship, Comparable<Relationship> 
 
 	@Override
 	public boolean equals(Object obj) {
+		log("r.equals(Object obj)");
+		if (!(obj instanceof InfoRelationship)) {
+			return false;
+		}
 		return ((InfoRelationship) obj).unwrap().getId() == rs.getId();
 	}
 
 	@Override
-	public int compareTo(Relationship r) {
-		int ourId = (int) this.getId(), theirId = (int) r.getId();
+	public int compareTo(Relationship arg0) {
+		log("r.compareTo(Node arg0)");
+		long ourId = this.getId();
+		long theirId = ((InfoRelationship) arg0).unwrap().getId();
 
 		if (ourId < theirId) {
 			return -1;
@@ -144,4 +150,11 @@ public class InfoRelationship implements Relationship, Comparable<Relationship> 
 			return 0;
 		}
 	}
+
+	@Override
+	public int hashCode() {
+		log("n.hashCode()");
+		return (int) rs.getId();
+	}
+
 }

@@ -16,7 +16,7 @@ import org.neo4j.graphdb.Traverser.Order;
 public class InfoNode implements Node, Comparable<Node> {
 	@Override
 	public String toString() {
-		return "InfoNode" + n.getId();
+		return "InfoNode[" + n.getId() + "]";
 	}
 
 	private Node n;
@@ -223,12 +223,18 @@ public class InfoNode implements Node, Comparable<Node> {
 
 	@Override
 	public boolean equals(Object obj) {
+		log("n.equals(Object obj)");
+		if (!(obj instanceof InfoNode)) {
+			return false;
+		}
 		return ((InfoNode) obj).unwrap().getId() == n.getId();
 	}
 
 	@Override
 	public int compareTo(Node arg0) {
-		long ourId = this.getId(), theirId = n.getId();
+		log("n.compareTo(Node arg0)");
+		long ourId = this.getId();
+		long theirId = ((InfoNode) arg0).unwrap().getId();
 
 		if (ourId < theirId) {
 			return -1;
@@ -238,4 +244,11 @@ public class InfoNode implements Node, Comparable<Node> {
 			return 0;
 		}
 	}
+
+	@Override
+	public int hashCode() {
+		log("n.hashCode()");
+		return (int) n.getId();
+	}
+
 }
