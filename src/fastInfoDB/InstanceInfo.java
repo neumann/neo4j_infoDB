@@ -44,12 +44,16 @@ public class InstanceInfo implements Serializable {
 	
 	// TODO finish the interrela count
 	public void logHop(Relationship rs){
-//		if(rs instanceof PRelation){
-//		
-//			
-//		}else{
-//			accesses[InfoKey.IntraHop.ordinal()]++;
-//		}
+		
+		if(rs.hasProperty("_isGhost") || rs.hasProperty("_isHalf")){
+			// interhop on partitioned db
+			accesses[InfoKey.InterHop.ordinal()]++;
+		}else if(true) {
+			// interhop on normal database 
+			accesses[InfoKey.InterHop.ordinal()]++;
+		}else {
+			accesses[InfoKey.IntraHop.ordinal()]++;
+		}
 	}
 	
 	public void resetTraffic(){
