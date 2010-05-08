@@ -153,7 +153,7 @@ public class InfoRelationship implements Relationship, Comparable<Relationship> 
 
 	@Override
 	public int hashCode() {
-		log("n.hashCode()");
+		log("r.hashCode()");
 		return (int) rs.getId();
 	}
 
