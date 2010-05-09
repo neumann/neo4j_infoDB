@@ -34,6 +34,7 @@ public class InfoGraphDatabaseService implements GraphDatabaseService {
 
 	public InfoGraphDatabaseService(String storDir) {
 		this.db = new EmbeddedGraphDatabase(storDir);
+		inf = new InstanceInfo();
 	}
 
 	@Override
