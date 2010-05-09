@@ -1,6 +1,5 @@
 package infoDB;
 
-
 import infoDB.InstanceInfo.InfoKey;
 
 import java.io.Serializable;
@@ -19,15 +18,15 @@ import org.neo4j.kernel.EmbeddedGraphDatabase;
 public class InfoGraphDatabaseService implements GraphDatabaseService {
 	private GraphDatabaseService db;
 	InstanceInfo inf;
-	
+
 	private void log(InfoKey key) {
 		inf.log(key);
 	}
 
-	public InstanceInfo getInstanceInfo(){
+	public InstanceInfo getInstanceInfo() {
 		return inf;
 	}
-	
+
 	public String accessToString() {
 		return inf.toString();
 	}
@@ -45,7 +44,7 @@ public class InfoGraphDatabaseService implements GraphDatabaseService {
 	@Override
 	public Node createNode() {
 		log(InfoKey.n_create);
-		return new InfoNode(db.createNode(),this);
+		return new InfoNode(db.createNode(), this);
 	}
 
 	@Override
@@ -67,18 +66,19 @@ public class InfoGraphDatabaseService implements GraphDatabaseService {
 	@Override
 	public Node getNodeById(long arg0) {
 		log(InfoKey.Traffic);
-		return new InfoNode(db.getNodeById(arg0),this);
+		return new InfoNode(db.getNodeById(arg0), this);
 	}
 
 	@Override
 	public Node getReferenceNode() {
-		return new InfoNode(db.getReferenceNode(),this);
+		return new InfoNode(db.getReferenceNode(), this);
 	}
 
 	@Override
 	public Relationship getRelationshipById(long arg0) {
 		log(InfoKey.Traffic);
-		InfoRelationship infRel = new InfoRelationship(db.getRelationshipById(arg0),this);
+		InfoRelationship infRel = new InfoRelationship(db
+				.getRelationshipById(arg0), this);
 		inf.logHop(infRel);
 		return infRel;
 	}
@@ -120,7 +120,8 @@ public class InfoGraphDatabaseService implements GraphDatabaseService {
 		private Iterable<Node> iter;
 		private InfoGraphDatabaseService db;
 
-		public InfoNodeIteratable(Iterable<Node> iter, InfoGraphDatabaseService db) {
+		public InfoNodeIteratable(Iterable<Node> iter,
+				InfoGraphDatabaseService db) {
 			this.iter = iter;
 			this.db = db;
 		}
@@ -135,7 +136,7 @@ public class InfoGraphDatabaseService implements GraphDatabaseService {
 	private class InfoNodeIterator implements Iterator<Node> {
 		private Iterator<Node> iter;
 		private InfoGraphDatabaseService db;
-		
+
 		public InfoNodeIterator(Iterator<Node> iter, InfoGraphDatabaseService db) {
 			this.iter = iter;
 			this.db = db;
@@ -148,7 +149,7 @@ public class InfoGraphDatabaseService implements GraphDatabaseService {
 
 		@Override
 		public Node next() {
-			return new InfoNode(iter.next(),db);
+			return new InfoNode(iter.next(), db);
 		}
 
 		@Override
