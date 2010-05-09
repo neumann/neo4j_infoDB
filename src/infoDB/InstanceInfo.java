@@ -1,8 +1,9 @@
-package fastInfoDB;
+package infoDB;
 
 import java.io.Serializable;
 import java.util.HashMap;
 
+import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
 public class InstanceInfo implements Serializable {
@@ -12,7 +13,7 @@ public class InstanceInfo implements Serializable {
 	private long[] accesses; 
 	
 	public enum InfoKey{
-		InterHop, IntraHop, NumNodes, NumRelas, Traffic,TRANSACTION,SHUTDOWN, RS_DELETE, N_DELETE, RS_CREATE, N_CREATE, GETALLNODES, NODE_BYID, REL_BYID, N_GETID, GetRels,HasREL, N_GetProp, RS_GetProp, RS_GetID, N_HasProp, RS_HasProp, N_RemProp, RS_RemProp, N_SetProp, RS_SetProp, RS_GETNODE, RS_GetType, RS_IsType
+		InterHop, IntraHop, NumNodes, NumRelas, Traffic, rs_delete, n_delete, rs_create, n_create
 	}
 	
 	public InstanceInfo() {
@@ -24,36 +25,55 @@ public class InstanceInfo implements Serializable {
 	}
 	
 	public long getValue(InfoKey key){
-		switch (key) {
-		case Traffic:
-			long sum = 0;
-			for(int i = InfoKey.RS_DELETE.ordinal(); i < accesses.length; i++){
-				sum+=accesses[i];
-			}
-			return sum + accesses[InfoKey.Traffic.ordinal()];
-
-		default:
-			break;
-		}
 		return accesses[key.ordinal()]++;
 	}
 	
 	public void log( InfoKey key ){
 		accesses[key.ordinal()]++;
+		switch (key) {
+		case rs_create:
+			accesses[InfoKey.Traffic.ordinal()]++;
+			accesses[InfoKey.NumRelas.ordinal()]++;
+			return;
+		case rs_delete:
+			accesses[InfoKey.Traffic.ordinal()]++;
+			accesses[InfoKey.NumRelas.ordinal()]--;
+			return;
+		case n_create:
+			accesses[InfoKey.Traffic.ordinal()]++;
+			accesses[InfoKey.NumNodes.ordinal()]++;
+			return;
+		case n_delete:
+			accesses[InfoKey.Traffic.ordinal()]++;
+			accesses[InfoKey.NumNodes.ordinal()]--;
+			return;
+		default:
+			break;
+		}
 	}
-	
-	// TODO finish the interrela count
+
 	public void logHop(Relationship rs){
 		
 		if(rs.hasProperty("_isGhost") || rs.hasProperty("_isHalf")){
 			// interhop on partitioned db
 			accesses[InfoKey.InterHop.ordinal()]++;
-		}else if(true) {
-			// interhop on normal database 
-			accesses[InfoKey.InterHop.ordinal()]++;
-		}else {
-			accesses[InfoKey.IntraHop.ordinal()]++;
+			return;
+		}			
+		
+		Node[] nodes = rs.getNodes();
+		if(nodes[0].hasProperty("_color")) {
+			byte c1 = (Byte) nodes[0].getProperty("_color");
+			byte c2 = (Byte) nodes[1].getProperty("_color");
+		
+			if(c1!=c2){
+				accesses[InfoKey.InterHop.ordinal()]++;
+				return;
+			}
 		}
+			
+		// normal hop
+		accesses[InfoKey.IntraHop.ordinal()]++;
+		
 	}
 	
 	public void resetTraffic(){

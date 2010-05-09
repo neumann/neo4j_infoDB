@@ -1,8 +1,7 @@
-package fastInfoDB;
-
-import fastInfoDB.InstanceInfo.InfoKey;
+package functionCallDB;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -15,130 +14,137 @@ import org.neo4j.graphdb.event.KernelEventHandler;
 import org.neo4j.graphdb.event.TransactionEventHandler;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 
-public class InfoGraphDatabaseService implements GraphDatabaseService {
+public class FuncGraphDatabaseService implements GraphDatabaseService {
 	private GraphDatabaseService db;
-	InstanceInfo inf;
-	
-	private void log(InfoKey key) {
-		inf.log(key);
+	public static HashMap<String, Long> accesses = new HashMap<String, Long>();
+
+	public static void log(String key) {
+		if (accesses.containsKey(key)) {
+			long val = accesses.get(key) + 1;
+			accesses.put(key, val);
+		} else {
+			accesses.put(key, new Long(1));
+		}
+
+		// System.out.println(InfoGraphDatabaseService.accessToString());
 	}
 
-	public InstanceInfo getInstanceInfo(){
-		return inf.takeSnapshot();
-	}
-	
-	public String accessToString() {
-		return inf.toString();
+	public static String accessToString() {
+		return accesses.toString();
 	}
 
-	public InfoGraphDatabaseService(String storDir) {
+	public FuncGraphDatabaseService(String storDir) {
 		this.db = new EmbeddedGraphDatabase(storDir);
 	}
 
 	@Override
 	public Transaction beginTx() {
-		log(InfoKey.TRANSACTION);
+		log("beginTx()");
 		return db.beginTx();
 	}
 
 	@Override
 	public Node createNode() {
-		log(InfoKey.N_CREATE);
-		return new InfoNode(db.createNode(),this);
+		log("createNode()");
+		return new FuncNode(db.createNode());
 	}
 
 	@Override
 	public boolean enableRemoteShell() {
+		log("enableRemoteShell()");
 		return db.enableRemoteShell();
 	}
 
 	@Override
 	public boolean enableRemoteShell(Map<String, Serializable> arg0) {
+		log("enableRemoteShell(Map<String, Serializable> arg0)");
 		return db.enableRemoteShell(arg0);
 	}
 
+	// TODO wrapper
 	@Override
 	public Iterable<Node> getAllNodes() {
-		log(InfoKey.GETALLNODES);
-		return new InfoNodeIteratable(db.getAllNodes(), this);
+		log("getAllNodes()");
+		return new InfoNodeIteratable(db.getAllNodes());
 	}
 
 	@Override
 	public Node getNodeById(long arg0) {
-		log(InfoKey.NODE_BYID);
-		return new InfoNode(db.getNodeById(arg0),this);
+		log("getNodeById()");
+		return new FuncNode(db.getNodeById(arg0));
 	}
 
 	@Override
 	public Node getReferenceNode() {
-		return new InfoNode(db.getReferenceNode(),this);
+		log("getReferenceNode()");
+		return new FuncNode(db.getReferenceNode());
 	}
 
 	@Override
 	public Relationship getRelationshipById(long arg0) {
-		log(InfoKey.REL_BYID);
-		InfoRelationship infRel = new InfoRelationship(db.getRelationshipById(arg0),this);
-		inf.logHop(infRel);
-		return infRel;
+		log("getRelationshipById(long arg0)");
+		return new FuncRelationship(db.getRelationshipById(arg0));
 	}
 
 	@Override
 	public Iterable<RelationshipType> getRelationshipTypes() {
+		log("getRelationshipTypes()");
 		return db.getRelationshipTypes();
 	}
 
 	@Override
 	public KernelEventHandler registerKernelEventHandler(KernelEventHandler arg0) {
+		log("registerKernelEventHandler(arg0)");
 		return db.registerKernelEventHandler(arg0);
 	}
 
 	@Override
 	public <T> TransactionEventHandler<T> registerTransactionEventHandler(
 			TransactionEventHandler<T> arg0) {
+		log("registerTransactionEventHandler(arg0)");
 		return db.registerTransactionEventHandler(arg0);
 	}
 
 	@Override
 	public void shutdown() {
-		log(InfoKey.SHUTDOWN);
+		log("shutdown())");
 		db.shutdown();
 	}
 
 	@Override
 	public KernelEventHandler unregisterKernelEventHandler(
 			KernelEventHandler arg0) {
+		log("unregisterKernelEventHandler(arg0)");
 		return db.unregisterKernelEventHandler(arg0);
 	}
 
 	@Override
 	public <T> TransactionEventHandler<T> unregisterTransactionEventHandler(
 			TransactionEventHandler<T> arg0) {
+		log("unregisterTransactionEventHandler(arg0)");
 		return db.unregisterTransactionEventHandler(arg0);
 	}
 
 	private class InfoNodeIteratable implements Iterable<Node> {
 		private Iterable<Node> iter;
-		private InfoGraphDatabaseService db;
 
-		public InfoNodeIteratable(Iterable<Node> iter, InfoGraphDatabaseService db) {
+		public InfoNodeIteratable(Iterable<Node> iter) {
 			this.iter = iter;
-			this.db = db;
 		}
 
 		@Override
 		public Iterator<Node> iterator() {
-			return new InfoNodeIterator(iter.iterator(), db);
+
+			return new InfoNodeIterator(iter.iterator());
 		}
 
 	}
 
 	private class InfoNodeIterator implements Iterator<Node> {
 		private Iterator<Node> iter;
-		private InfoGraphDatabaseService db;
-		
-		public InfoNodeIterator(Iterator<Node> iter, InfoGraphDatabaseService db) {
+
+		public InfoNodeIterator(Iterator<Node> iter) {
 			this.iter = iter;
-			this.db = db;
 		}
 
 		@Override
@@ -148,7 +154,7 @@ public class InfoGraphDatabaseService implements GraphDatabaseService {
 
 		@Override
 		public Node next() {
-			return new InfoNode(iter.next(),db);
+			return new FuncNode(iter.next());
 		}
 
 		@Override

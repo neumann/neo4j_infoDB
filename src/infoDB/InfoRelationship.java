@@ -1,160 +1,151 @@
 package infoDB;
 
+import infoDB.InstanceInfo.InfoKey;
+
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
 
-public class InfoRelationship implements Relationship, Comparable<Relationship> {
-	@Override
-	public String toString() {
-		return "InfoRelationship[" + rs.getId() + "]";
-	}
-
+public class InfoRelationship implements Relationship, Comparable<Relationship>{
 	private Relationship rs;
-
+	private final InfoGraphDatabaseService db;
+	private InstanceInfo inf;
+	
 	protected Relationship unwrap() {
 		return rs;
 	}
 
-	private void log(String key) {
-		InfoGraphDatabaseService.log(key);
+	private void log(InfoKey key) {
+		inf.log(key);
 	}
 
-	public InfoRelationship(Relationship rs) {
+	public InfoRelationship(Relationship rs, InfoGraphDatabaseService db) {
 		if (rs instanceof InfoRelationship)
 			throw new Error("dont hand and inforel to an inforel constructor");
 		this.rs = rs;
+		this.db = db;
+		this.inf = db.inf;
 	}
 
 	@Override
 	public void delete() {
-		log("rs.delete()");
+		log(InfoKey.rs_delete);
 		rs.delete();
 	}
 
 	@Override
 	public Node getEndNode() {
-		log("rs.getEndNode()");
-		return new InfoNode(rs.getEndNode());
+		log(InfoKey.Traffic);
+		return new InfoNode(rs.getEndNode(), db);
 	}
 
 	@Override
 	public long getId() {
-		log("rs.getId()");
+		log(InfoKey.Traffic);
 		return rs.getId();
 	}
 
 	@Override
 	public Node[] getNodes() {
-		log("getNodes()");
+		log(InfoKey.Traffic);
 		Node[] n = rs.getNodes();
 		InfoNode[] res = new InfoNode[n.length];
 		for (int i = 0; i < n.length; i++) {
-			res[i] = new InfoNode(n[i]);
+			res[i] = new InfoNode(n[i], db);
 		}
 		return res;
 	}
 
 	@Override
 	public Node getOtherNode(Node arg0) {
-		log("getOtherNode(arg0)");
-		return new InfoNode(rs.getOtherNode(((InfoNode) arg0).unwrap()));
+		log(InfoKey.Traffic);
+		return new InfoNode(rs.getOtherNode(((InfoNode) arg0).unwrap()), db);
 	}
 
 	@Override
 	public Node getStartNode() {
-		log("getStartNode()");
-		return new InfoNode(rs.getStartNode());
+		log(InfoKey.Traffic);
+		return new InfoNode(rs.getStartNode(),db);
 	}
 
 	@Override
 	public RelationshipType getType() {
-		log("getType()");
+		log(InfoKey.Traffic);
 		return rs.getType();
 	}
 
 	@Override
 	public boolean isType(RelationshipType arg0) {
-		log("isType(arg0)");
+		log(InfoKey.Traffic);
 		return rs.isType(arg0);
 	}
 
 	@Override
 	public GraphDatabaseService getGraphDatabase() {
-		throw new Error("not implemented");
+		return db;
 	}
 
 	@Override
 	public Object getProperty(String arg0) {
-		log("r.getProperty(arg0)");
+		log(InfoKey.Traffic);
 		return rs.getProperty(arg0);
 	}
 
 	@Override
 	public Object getProperty(String arg0, Object arg1) {
-		log("r.getProperty(arg0, arg1)");
+		log(InfoKey.Traffic);
 		return rs.getProperty(arg0, arg1);
 	}
 
 	@Override
 	public Iterable<String> getPropertyKeys() {
-		log("r.getPropertyKeys()");
 		return rs.getPropertyKeys();
 	}
 
 	@Override
 	public Iterable<Object> getPropertyValues() {
-		log("r.getPropertyValues()");
 		return getPropertyValues();
 	}
 
 	@Override
 	public boolean hasProperty(String arg0) {
-		log("r.hasProperty(arg0)");
+		log(InfoKey.Traffic);
 		return rs.hasProperty(arg0);
 	}
 
 	@Override
 	public Object removeProperty(String arg0) {
-		log("r.removeProperty(arg0)");
+		log(InfoKey.Traffic);
 		return rs.removeProperty(arg0);
 	}
 
 	@Override
 	public void setProperty(String arg0, Object arg1) {
-		log("r.setProperty(arg0, arg1)");
+		log(InfoKey.Traffic);
 		rs.setProperty(arg0, arg1);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		log("r.equals(Object obj)");
-		if (!(obj instanceof InfoRelationship)) {
-			return false;
-		}
 		return ((InfoRelationship) obj).unwrap().getId() == rs.getId();
 	}
-
+	
 	@Override
-	public int compareTo(Relationship arg0) {
-		log("r.compareTo(Node arg0)");
-		long ourId = this.getId();
-		long theirId = ((InfoRelationship) arg0).unwrap().getId();
+	public int compareTo(Relationship r) {
+		int ourId = (int) this.getId(), theirId = (int) r.getId();
 
-		if (ourId < theirId) {
-			return -1;
-		} else if (ourId > theirId) {
-			return 1;
-		} else {
-			return 0;
-		}
+        if ( ourId < theirId )
+        {
+            return -1;
+        }
+        else if ( ourId > theirId )
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
 	}
-
-	@Override
-	public int hashCode() {
-		log("r.hashCode()");
-		return (int) rs.getId();
-	}
-
 }
